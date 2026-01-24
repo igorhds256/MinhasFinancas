@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Transacao
 from .forms import TransacaoForm
-from django.db.models import Sum
+from django.db.models import Sum, FloatField, Case, When, F
 from django.db.models.functions import TruncMonth
 from datetime import datetime
+
 
 # Create your views here.
 
@@ -70,10 +71,19 @@ def dashboard(request):
     saldo = total_receitas - total_despesas
 
     # Dados para o gráfico (Agrupado por mês)
-    dados_grafico = (
+    evolucao_saldo = (
         Transacao.objects.annotate(mes=TruncMonth('data'))
         .values('mes')
-        .annotate(total=Sum('valor'))
+        .annotate(
+            saldo_mes=Sum(
+                Case(
+                    When(tipo='R', then=F('valor')),
+                    When(tipo='D', then=-F('valor')),
+                    default=0,
+                    output_field=FloatField(),
+                )
+            )
+        )
         .order_by('mes')
     )
 
@@ -89,4 +99,4 @@ def dashboard(request):
         'saldo': saldo,
         'transacoes': Transacao.objects.all()[:10], # Últimas 10
     }
-    return render(request, 'dashboard.html', {**context, 'dados_grafico': dados_grafico, 'dados_por_mes': dados_por_mes})
+    return render(request, 'dashboard.html', {**context, 'evolucao_saldo': evolucao_saldo, 'dados_por_mes': dados_por_mes})

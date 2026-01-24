@@ -81,45 +81,23 @@
     </div>
 
     <!-- Scripts -->
-    <script>
-    var ctx = document.getElementById('grafico').getContext('2d');
-    var grafico = new Chart(ctx, {
-        type: 'line',
+<script>
+    const labels = [{% for item in evolucao_saldo %}"{{ item.mes|date:'M/Y' }}",{% endfor %}];
+    const data = [{% for item in evolucao_saldo %}{{ item.saldo_mes|stringformat:".2f" }},{% endfor %}];
+
+    // Configuração do Chart.js
+    const ctx = document.getElementById('grafico').getContext('2d');
+    new Chart(ctx, {
+        type: 'line', // ou 'bar'
         data: {
-            labels: [{% for d in dados_grafico %}'{{ d.mes|date:"M/Y" }}',{% endfor %}],
+            labels: labels,
             datasets: [{
-                label: 'Total por mês',
-                data: [{% for d in dados_grafico %}{{ d.total }},{% endfor %}],
-                backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 2,
-                tension: 0.3, // suaviza a linha
+                label: 'Saldo Mensal',
+                data: data,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 fill: true
             }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        color: '#333'
-                    }
-                }
-            },
-            scales: {
-                y: { // em Chart.js 3+ é "y" e não "yAxes"
-                    beginAtZero: true,
-                    ticks: {
-                        color: '#333'
-                    }
-                },
-                x: {
-                    ticks: {
-                        color: '#333'
-                    }
-                }
-            }
         }
     });
 </script>
