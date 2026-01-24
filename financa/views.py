@@ -77,10 +77,16 @@ def dashboard(request):
         .order_by('mes')
     )
 
+    dados_por_mes = ( 
+        Transacao.objects.annotate(mes=TruncMonth('data')) 
+        .values('mes', 'tipo') 
+        .annotate(total=Sum('valor')) 
+        .order_by('mes') )
+
     context = {
         'total_receitas': total_receitas,
         'total_despesas': total_despesas,
         'saldo': saldo,
         'transacoes': Transacao.objects.all()[:10], # Últimas 10
     }
-    return render(request, 'dashboard.html', {**context, 'dados_grafico': dados_grafico})
+    return render(request, 'dashboard.html', {**context, 'dados_grafico': dados_grafico, 'dados_por_mes': dados_por_mes})

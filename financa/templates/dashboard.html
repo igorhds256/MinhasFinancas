@@ -42,6 +42,10 @@
             <div class="card-body">
                 <canvas id="grafico"></canvas>
             </div>
+            <div class="card-header"> Receita e Despesa</div>
+            <div class="card-body">
+                <canvas id="graficoBarras"></canvas>
+            </div>
         </div>
 
         <!-- Últimas transações -->
@@ -119,5 +123,37 @@
         }
     });
 </script>
+<script>
+    var ctxBarras = document.getElementById('graficoBarras').getContext('2d');
+    var meses = [{% for d in dados_por_mes|dictsort:"mes"|slice:":12" %}'{{ d.mes|date:"M/Y" }}',{% endfor %}];
+    var receitas = [{% for d in dados_por_mes|dictsort:"mes"|slice:":12" %}{% if d.tipo == 'R' %}{{ d.total }},{% else %}0,{% endif %}{% endfor %}];
+    var despesas = [{% for d in dados_por_mes|dictsort:"mes"|slice:":12" %}{% if d.tipo == 'D' %}{{ d.total }},{% else %}0,{% endif %}{% endfor %}];
 
+    var graficoBarras = new Chart(ctxBarras, {
+        type: 'bar',
+        data: {
+            labels: meses,
+            datasets: [
+                {
+                    label: 'Receitas',
+                    data: receitas,
+                    backgroundColor: 'rgba(75, 192, 192, 0.7)'
+                },
+                {
+                    label: 'Despesas',
+                    data: despesas,
+                    backgroundColor: 'rgba(255, 99, 132, 0.7)'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
