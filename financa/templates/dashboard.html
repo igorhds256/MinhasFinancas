@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block head %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Dashboard Financeiro</h1>
+
+        <!-- Cards de resumo -->
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">Receitas</div>
+                    <div class="card-body">
+                        <h4 class="card-title">R$ {{ total_receitas|floatformat:2 }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-danger mb-3">
+                    <div class="card-header">Despesas</div>
+                    <div class="card-body">
+                        <h4 class="card-title">R$ {{ total_despesas|floatformat:2 }}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-info mb-3">
+                    <div class="card-header">Saldo</div>
+                    <div class="card-body">
+                        <h4 class="card-title">R$ {{ saldo|floatformat:2 }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gráfico -->
+        <div class="card mb-4">
+            <div class="card-header">Evolução Mensal</div>
+            <div class="card-body">
+                <canvas id="grafico"></canvas>
+            </div>
+        </div>
+
+        <!-- Últimas transações -->
+        <div class="card">
+            <div class="card-header">Últimas Transações</div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>Descrição</th>
+                            <th>Tipo</th>
+                            <th>Valor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in transacoes %}
+                        <tr>
+                            <td>{{ t.data|date:"d/m/Y" }}</td>
+                            <td>{{ t.descricao }}</td>
+                            <td>{{ t.tipo }}</td>
+                            <td>R$ {{ t.valor|floatformat:2 }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">Nenhuma transação encontrada.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+    var ctx = document.getElementById('grafico').getContext('2d');
+    var grafico = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [{% for d in dados_grafico %}'{{ d.mes|date:"M/Y" }}',{% endfor %}],
+            datasets: [{
+                label: 'Total por mês',
+                data: [{% for d in dados_grafico %}{{ d.total }},{% endfor %}],
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 2,
+                tension: 0.3, // suaviza a linha
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    labels: {
+                        color: '#333'
+                    }
+                }
+            },
+            scales: {
+                y: { // em Chart.js 3+ é "y" e não "yAxes"
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#333'
+                    }
+                },
+                x: {
+                    ticks: {
+                        color: '#333'
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+{% endblock %}

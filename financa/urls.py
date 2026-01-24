@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import financas, adicionar_transacao ,detalhes_transacao, editar_transacao, deletar_transacao
+from .views import financas, adicionar_transacao ,detalhes_transacao, editar_transacao, deletar_transacao, dashboard
 
 urlpatterns = [
     path('', financas, name='financas'),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('detalhes/<int:transacao_id>/', detalhes_transacao, name='detalhes_transacao'),
     path('editar/<int:transacao_id>/', editar_transacao, name='editar_transacao'),
     path('deletar/<int:transacao_id>/', deletar_transacao, name='deletar_transacao'),
+    path('dashboard/', dashboard, name='dashboard'),
 ]
