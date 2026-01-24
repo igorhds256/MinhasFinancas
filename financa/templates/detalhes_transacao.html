@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Deletar Anime{% endblock %}
+
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+    <h1 style="text-align: center;">Detalhes da Transação: {{ transacao.descricao }}</h1>
+    <p>Descricao: {{ transacao.descricao }}</p>
+    <p>Valor: {{ transacao.valor }}</p>
+    <p>Data: {{ transacao.data }}</p>
+    <p>Tipo: {% if transacao.tipo == 'R' %}Receita
+        {% else %}Despesa
+        {% endif %}</p>    
+    <form method="post" class="post-form">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <a href="{% url 'financas' %}" class="btn btn-primary">Voltar</a>
+    </form>
+{% endblock %}

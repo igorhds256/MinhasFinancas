@@ -1,0 +1,63 @@
+'{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}Minhas Finanças{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+{% endblock %}
+
+
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Finanças Pessoais</h1>
+    <form method="GET" action="{% url 'financas' %}" class="form-inline my-2 my-lg-0">
+        <input class="form-control mr-sm-2" type="search" placeholder="Descrição" aria-label="Descrição" name="descricao" value="{{ request.GET.descricao }}">
+    <select class="form-control mr-sm-2" name="tipo">
+        <option value="">Todas</option>
+        <option value="R">Receita</option>
+        <option value="D">Despesa</option>
+    </select>
+
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Filtrar</button>
+    </form>
+    <br>
+    <div class="list-group">
+        {% for transacao in transacoes %}
+        <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+            <div>
+                <h6 class="mb-1 fw-bold">{{ transacao.descricao }}</h6>
+                <small class="text-muted">{{ transacao.data }}</small>
+            </div>
+            {% if transacao.tipo == 'R' %}
+            <span class="badge-lg bg-success rounded-pill badge_black" >
+                R$ {{ transacao.valor }}
+            </span>
+            {% elif transacao.tipo == 'D' %}
+            <span class="badge-lg bg-danger rounded-pill badge_black">
+                R$ {{ transacao.valor }}
+            </span>
+            {% endif %}
+            <div>
+                <a href="{% url 'detalhes_transacao' transacao.id %}" class="btn btn-primary">Detalhes</a>
+                <a href="{% url 'editar_transacao' transacao.id %}" class="btn btn-warning"> Editar</a>
+                <a href="{% url 'deletar_transacao' transacao.id %}" class="btn btn-danger">Deletar</a>
+            </div>
+            
+        </div>
+        
+        {% endfor %}
+    </div>
+    <a href="{% url 'adicionar_transacao' %}" class="btn btn-primary mt-3">Adicionar Transação</a>
+    <div class="mt-4">
+        {% if saldo >= 0 %}
+        <h4 class="text-success">Saldo Atual: R$ {{ saldo }}</h4>
+        {% else %}
+        <h4 class="text-danger">Saldo Atual: R$ {{ saldo }}</h4>
+        {% endif %}
+    </div>  
+</div>
+
+{% endblock %}'

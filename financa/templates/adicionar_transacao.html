@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Criar Transacao{% endblock %}
+
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h1 style="text-align: center;">Criar Transacao</h1>
+    <br>
+    <form method="post" class="post-form">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="save btn btn-primary">Salvar</button>
+        <a href="{% url 'financas'%}" class="btn btn-primary">Voltar</a>
+    </form>
+{% endblock %}
