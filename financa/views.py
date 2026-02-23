@@ -4,10 +4,15 @@ from .forms import TransacaoForm
 from django.db.models import Sum, FloatField, Case, When, F
 from django.db.models.functions import TruncMonth
 from datetime import datetime
+from django.contrib.auth.decorators import login_required
 
 
 # Create your views here.
 
+def home(request):
+    return render(request, 'home.html')
+
+@login_required
 def financas(request):
     ano_atual = datetime.now().year
     anos = range(ano_atual - 5, ano_atual + 5)
@@ -32,6 +37,7 @@ def financas(request):
     saldo = receitas - despesas
     return render(request, 'financas.html', {'transacoes': transacoes, 'saldo': saldo, 'anos': anos})
 
+@login_required
 def adicionar_transacao(request):
     if request.method == 'POST':
         form = TransacaoForm(request.POST)
@@ -42,10 +48,12 @@ def adicionar_transacao(request):
         form = TransacaoForm()
     return render(request, 'adicionar_transacao.html', {'form': form})
 
+@login_required
 def detalhes_transacao(request, transacao_id):
     transacao = get_object_or_404(Transacao, id=transacao_id)
     return render(request, 'detalhes_transacao.html', {'transacao': transacao})
 
+@login_required
 def editar_transacao(request, transacao_id):
     transacao = get_object_or_404(Transacao, id=transacao_id)
     if request.method == 'POST':
@@ -57,13 +65,15 @@ def editar_transacao(request, transacao_id):
         form = TransacaoForm(instance=transacao)
     return render(request, 'editar_transacao.html', {'form': form})
 
+@login_required
 def deletar_transacao(request, transacao_id):
     transacao = get_object_or_404(Transacao, id=transacao_id)
     if request.method == 'POST':
         transacao.delete()
         return redirect('financas')
     return render(request, 'deletar_transacao.html', {'transacao': transacao})  
-    
+
+@login_required
 def dashboard(request):
     # Cálculos para os cards de resumo
     total_receitas = Transacao.objects.filter(tipo='R').aggregate(Sum('valor'))['valor__sum'] or 0

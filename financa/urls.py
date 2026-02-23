@@ -1,8 +1,9 @@
 from django.urls import path
-from .views import financas, adicionar_transacao ,detalhes_transacao, editar_transacao, deletar_transacao, dashboard
+from .views import financas, adicionar_transacao ,detalhes_transacao, editar_transacao, deletar_transacao, dashboard, home
 
 urlpatterns = [
-    path('', financas, name='financas'),
+    path('', home, name='home'),
+    path('listar/', financas, name='financas'),
     path('adicionar/', adicionar_transacao, name='adicionar_transacao'),
     path('detalhes/<int:transacao_id>/', detalhes_transacao, name='detalhes_transacao'),
     path('editar/<int:transacao_id>/', editar_transacao, name='editar_transacao'),
